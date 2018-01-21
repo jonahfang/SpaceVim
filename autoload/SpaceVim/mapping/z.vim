@@ -44,8 +44,8 @@ function! SpaceVim#mapping#z#init() abort "{{{
     nnoremap zX zX
     let g:_spacevim_mappings_z['a'] = ['call feedkeys("za", "n")', 'toggle a fold']
     nnoremap za za
-    let g:_spacevim_mappings_z['b'] = ['call feedkeys("zb", "n")', 'redraw, cursor line at bottom']
-    nnoremap zb zb
+    "let g:_spacevim_mappings_z['b'] = ['call feedkeys("zb", "n")', 'redraw, cursor line at bottom']
+    "nnoremap zb zb
     let g:_spacevim_mappings_z['c'] = ['call feedkeys("zc", "n")', 'close a fold']
     nnoremap zc zc
     let g:_spacevim_mappings_z['d'] = ['call feedkeys("zd", "n")', 'delete a fold']
@@ -72,8 +72,8 @@ function! SpaceVim#mapping#z#init() abort "{{{
     nnoremap z<Right> zl
     let g:_spacevim_mappings_z['m'] = ['call feedkeys("zm", "n")', 'subtract one from `foldlevel`']
     nnoremap zm zm
-    let g:_spacevim_mappings_z['n'] = ['call feedkeys("zn", "n")', 'reset `foldenable`']
-    nnoremap zn zn
+    "let g:_spacevim_mappings_z['n'] = ['call feedkeys("zn", "n")', 'reset `foldenable`']
+    "nnoremap zn zn
     let g:_spacevim_mappings_z['o'] = ['call feedkeys("zo", "n")', 'open fold']
     nnoremap zo zo
     let g:_spacevim_mappings_z['r'] = ['call feedkeys("zr", "n")', 'add one to `foldlevel`']
