@@ -57,8 +57,8 @@ function! SpaceVim#mapping#z#init() abort "{{{
     let g:_spacevim_mappings_z['g'] = ['call feedkeys("zg", "n")', 'mark good spelled']
     nnoremap zg zg
     let g:_spacevim_mappings_z['h'] = ['call feedkeys("zh", "n")', 'scroll screen N characters to right']
-    nnoremap zh zh
-    let g:_spacevim_mappings_z['<Left>'] = ['call feedkeys("zh", "n")', 'scroll screen N characters to right']
+    "nnoremap zh zh
+    "let g:_spacevim_mappings_z['<Left>'] = ['call feedkeys("zh", "n")', 'scroll screen N characters to right']
     nnoremap z<Left> zh
     let g:_spacevim_mappings_z['i'] = ['call feedkeys("zi", "n")', 'toggle foldenable']
     nnoremap zi zi
