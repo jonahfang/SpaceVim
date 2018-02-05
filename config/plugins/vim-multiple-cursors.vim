@@ -28,12 +28,12 @@ elseif g:spacevim_autocomplete_method ==# 'deoplete'
   endfunction
 endif
 " Called once right before you start selecting multiple cursors
-function! Multiple_cursors_before()
-  call s:disable_autocomplete()
-endfunction
+"function! Multiple_cursors_before()
+"  call s:disable_autocomplete()
+"endfunction
 
 " Called once only when the multiple selection is canceled (default <Esc>)
-function! Multiple_cursors_after()
-  call s:enable_autocomplete()
-endfunction
+"function! Multiple_cursors_after()
+"  call s:enable_autocomplete()
+"endfunction
 " vim:set et sw=2 cc=80:
