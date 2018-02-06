@@ -41,7 +41,7 @@ function! SpaceVim#layers#unite#plugins() abort
         \ ['t9md/vim-unite-ack'],
         \ ['mileszs/ack.vim',{'on_cmd' : 'Ack'}],
         \ ['albfan/ag.vim',{'on_cmd' : 'Ag' , 'loadconf' : 1}],
-        \ ['dyng/ctrlsf.vim',{'on_cmd' : 'CtrlSF', 'on_map' : '<Plug>CtrlSF', 'loadconf' : 1 , 'loadconf_before' : 1}],
+        \ ['jonahfang/ctrlsf.vim',{'on_cmd' : 'CtrlSF', 'on_map' : '<Plug>CtrlSF', 'loadconf' : 1 , 'loadconf_before' : 1}],
         \ ['daisuzu/unite-adb'],
         \ ['osyo-manga/unite-airline_themes'],
         \ ['mattn/unite-vim_advent-calendar'],
