@@ -4,6 +4,7 @@ categories: tutorials
 excerpt: "I am a vimmer and a java developer. Here are some useful plugins for developing java in vim/neovim."
 redirect_from: "/2017/02/11/use-vim-as-a-java-ide.html"
 type: BlogPosting
+comments: true
 ---
 
 # [Blogs](https://spacevim.org/community#blogs) > Use Vim as a Java IDE
@@ -138,6 +139,6 @@ also you can set the classpath.
 
 ## REPL
 
-you need to install jdk8 which provide a build-in tools `jshell`, and SpaceVim use the `jshell` as default inferior REPL process:
+you need to install jdk9 which provide a build-in tools `jshell`, and SpaceVim use the `jshell` as default inferior REPL process:
 
 ![REPl-JAVA](https://user-images.githubusercontent.com/13142418/34159605-758461ba-e48f-11e7-873c-fc358ce59a42.gif)

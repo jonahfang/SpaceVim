@@ -3,7 +3,7 @@
 " Copyright (c) 2016-2017 Shidong Wang & Contributors
 " Author: Shidong Wang < wsdjeg at 163.com >
 " URL: https://spacevim.org
-" License: MIT license
+" License: GPLv3
 "=============================================================================
 
 
@@ -41,7 +41,7 @@ endfunction
 function! SpaceVim#layers#lang#php#config() abort
   call SpaceVim#plugins#runner#reg_runner('php', 'php %s')
   call SpaceVim#mapping#space#regesit_lang_mappings('php',
-        \ funcref('s:on_ft'))
+        \ function('s:on_ft'))
   if SpaceVim#layers#lsp#check_filetype('php')
     call SpaceVim#mapping#gd#add('php',
           \ function('SpaceVim#lsp#go_to_def'))

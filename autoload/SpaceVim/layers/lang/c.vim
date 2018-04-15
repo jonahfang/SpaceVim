@@ -1,3 +1,12 @@
+"=============================================================================
+" c.vim --- SpaceVim lang#c layer
+" Copyright (c) 2016-2017 Wang Shidong & Contributors
+" Author: Wang Shidong < wsdjeg at 163.com >
+" URL: https://spacevim.org
+" License: GPLv3
+"=============================================================================
+
+
 ""
 " @section lang#c, layer-lang-c
 " @parentsection layers
@@ -40,18 +49,16 @@
 
 
 
-let s:use_libclang = 0
 let s:clang_executable = 'clang'
 let s:SYSTEM = SpaceVim#api#import('system')
+let s:CPT = SpaceVim#api#import('vim#compatible')
+
+
 function! SpaceVim#layers#lang#c#plugins() abort
   let plugins = []
   if !SpaceVim#layers#lsp#check_filetype('c') && !SpaceVim#layers#lsp#check_filetype('cpp')
     if g:spacevim_autocomplete_method ==# 'deoplete'
-      if s:use_libclang
-        call add(plugins, ['zchee/deoplete-clang'])
-      else
-        call add(plugins, ['SpaceVim/deoplete-clang2'])
-      endif
+      call add(plugins, ['Shougo/deoplete-clangx', {'merged' : 0}])
     elseif g:spacevim_autocomplete_method ==# 'ycm'
       " no need extra plugins
     elseif g:spacevim_autocomplete_method ==# 'completor'
@@ -61,8 +68,12 @@ function! SpaceVim#layers#lang#c#plugins() abort
       call add(plugins, ['Rip-Rip/clang_complete'])
     endif
   endif
+  " chromatica is for neovim with py3
+  " clamp is for neovim rpcstart('python', " [s:script_folder_path.'/../python/engine.py'])]
+  " clighter8 is for vim8
+  " clighter is for old vim
   if has('nvim')
-    if has('python3')
+    if s:CPT.has('python3') && SpaceVim#util#haspy3lib('clang')
       call add(plugins, ['arakashic/chromatica.nvim', { 'merged' : 0}])
     else
       call add(plugins, ['bbchung/Clamp', { 'if' : has('python')}])
@@ -72,13 +83,12 @@ function! SpaceVim#layers#lang#c#plugins() abort
   else
     call add(plugins, ['bbchung/clighter', { 'if' : has('python')}])
   endif
-  call add(plugins, ['lyuts/vim-rtags', { 'if' : has('python')}])
   return plugins
 endfunction
 
 function! SpaceVim#layers#lang#c#config() abort
   call SpaceVim#plugins#runner#reg_runner('c', ['gcc -o #TEMP# %s', '#TEMP#'])
-  call SpaceVim#mapping#space#regesit_lang_mappings('c', funcref('s:language_specified_mappings'))
+  call SpaceVim#mapping#space#regesit_lang_mappings('c', function('s:language_specified_mappings'))
   call SpaceVim#plugins#runner#reg_runner('cpp', ['g++ -o #TEMP# %s', '#TEMP#'])
   call SpaceVim#mapping#space#regesit_lang_mappings('cpp', funcref('s:language_specified_mappings'))
   call SpaceVim#plugins#projectmanager#reg_callback(funcref('s:update_clang_flag'))
@@ -87,14 +97,10 @@ function! SpaceVim#layers#lang#c#config() abort
     let g:neomake_cpp_enabled_makers = ['clang']
   endif
   let g:chromatica#enable_at_startup=1
+  call add(g:spacevim_project_rooter_patterns, '.clang')
 endfunction
 
 function! SpaceVim#layers#lang#c#set_variable(var) abort
-  " use clang or libclang
-  let s:use_libclang = get(a:var,
-        \ 'enable_libclang',
-        \ 0)
-
   if has_key(a:var, 'clang_executable')
     let g:completor_clang_binary = a:var.clang_executable
     let g:deoplete#sources#clang#executable = a:var.clang_executable
@@ -104,8 +110,8 @@ function! SpaceVim#layers#lang#c#set_variable(var) abort
   endif
 
   if has_key(a:var, 'libclang_path')
-    let g:deoplete#sources#clang#libclang_path = a:var.libclang_path
     let g:chromatica#libclang_path = a:var.libclang_path
+    let g:clamp_libclang_file = a:var.libclang_path
   endif
 endfunction
 
@@ -114,7 +120,7 @@ function! s:language_specified_mappings() abort
   call SpaceVim#mapping#space#langSPC('nmap', ['l','r'],
         \ 'call SpaceVim#plugins#runner#open()',
         \ 'execute current file', 1)
-  if SpaceVim#layers#lsp#check_filetype('python')
+  if SpaceVim#layers#lsp#check_filetype('c')
     nnoremap <silent><buffer> K :call SpaceVim#lsp#show_doc()<CR>
 
     call SpaceVim#mapping#space#langSPC('nnoremap', ['l', 'd'],
@@ -158,7 +164,7 @@ elseif g:spacevim_enable_ale
     " g:ale_c_clang_options
     for ft in a:fts
       let g:ale_{ft}_clang_options = ' -fsyntax-only -Wall -Wextra -I./ ' . join(a:argv, ' ')
-      let g:ale_{ft}_clang_executabl = s:clang_executable
+      let g:ale_{ft}_clang_executable = s:clang_executable
     endfor
   endfunction
 else

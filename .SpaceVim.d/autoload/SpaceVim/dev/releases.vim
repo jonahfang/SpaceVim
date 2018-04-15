@@ -7,7 +7,7 @@ function! SpaceVim#dev#releases#open() abort
   let is_dev = g:spacevim_version =~ 'dev'
   let releases = {
         \ 'tag_name': (is_dev ? 'nightly' : g:spacevim_version),
-        \ 'target_commitish': 'dev',
+        \ 'target_commitish': 'master',
         \ 'name': (is_dev ? 'nightly' : 'SpaceVim v' . g:spacevim_version),
         \ 'body': (is_dev ? s:body() : SpaceVim#dev#releases#content()),
         \ 'draft': v:false,
@@ -32,7 +32,8 @@ function! s:get_list_of_PRs() abort
   let prs = []
   for i in range(1, 10)
     let issues = List('SpaceVim','SpaceVim', i)
-    call extend(prs, filter(issues, 'v:val["number"] > 966 && v:val["number"] < 1203'))
+    call extend(prs, filter(issues, 'v:val["number"] > 1205 && v:val["number"] < 1510'))
+    call extend(prs, filter(issues, 'v:val["number"] == 1203'))
   endfor
   return filter(prs, 'has_key(v:val, "pull_request")')
 endfunction

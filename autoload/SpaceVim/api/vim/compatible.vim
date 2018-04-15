@@ -1,3 +1,10 @@
+"=============================================================================
+" compatible.vim --- SpaceVim compatible API
+" Copyright (c) 2016-2017 Wang Shidong & Contributors
+" Author: Wang Shidong < wsdjeg at 163.com >
+" URL: https://spacevim.org
+" License: GPLv3
+"=============================================================================
 function! SpaceVim#api#vim#compatible#get() abort
   return map({
         \ 'execute' : '',
@@ -23,6 +30,7 @@ else
     else
       let s = a:1
     endif
+    let output = ''
     redir => output
     if s ==# 'silent'
       silent execute a:cmd

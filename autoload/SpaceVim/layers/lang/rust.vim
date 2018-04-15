@@ -1,3 +1,12 @@
+"=============================================================================
+" rust.vim --- SpaceVim lang#rust layer
+" Copyright (c) 2016-2017 Wang Shidong & Contributors
+" Author: Wang Shidong < wsdjeg at 163.com >
+" URL: https://spacevim.org
+" License: GPLv3
+"=============================================================================
+
+
 ""
 " @section lang#rust, layer-lang-rust
 " @parentsection layers
@@ -51,7 +60,7 @@ function! SpaceVim#layers#lang#rust#config() abort
 
   call SpaceVim#mapping#gd#add('rust', function('s:gotodef'))
   call SpaceVim#plugins#runner#reg_runner('rust', ['rustc %s -o #TEMP#', '#TEMP#'])
-  call SpaceVim#mapping#space#regesit_lang_mappings('rust', funcref('s:language_specified_mappings'))
+  call SpaceVim#mapping#space#regesit_lang_mappings('rust', function('s:language_specified_mappings'))
 endfunction
 
 function! s:language_specified_mappings() abort

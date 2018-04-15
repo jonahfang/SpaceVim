@@ -1,3 +1,11 @@
+"=============================================================================
+" space.vim --- Space key bindings
+" Copyright (c) 2016-2017 Wang Shidong & Contributors
+" Author: Wang Shidong < wsdjeg at 163.com >
+" URL: https://spacevim.org
+" License: GPLv3
+"=============================================================================
+
 let s:file = expand('<sfile>:~')
 function! SpaceVim#mapping#space#init() abort
   let g:_spacevim_mappings_space = {}
@@ -20,7 +28,7 @@ function! SpaceVim#mapping#space#init() abort
   let g:_spacevim_mappings_space.n = {'name' : '+Narrow/Numbers'}
   let g:_spacevim_mappings_space.q = {'name' : '+Quit'}
   let g:_spacevim_mappings_space.l = {'name' : '+Language Specified'}
-  let g:_spacevim_mappings_space.s = {'name' : '+Searching'}
+  let g:_spacevim_mappings_space.s = {'name' : '+Searching/Symbol'}
   let g:_spacevim_mappings_space.r = {'name' : '+Registers/rings/resume'}
   let g:_spacevim_mappings_space.d = {'name' : '+Debug'}
   if s:has_map_to_spc()
@@ -32,7 +40,7 @@ function! SpaceVim#mapping#space#init() abort
   vmap <Space> [SPC]
   if g:spacevim_enable_language_specific_leader
     nmap , [SPC]l
-    vmap , [SPC]l
+    xmap , [SPC]l
   endif
   " Windows
   for i in range(1, 9)
@@ -47,10 +55,17 @@ function! SpaceVim#mapping#space#init() abort
         \ 'call call('
         \ . string(function('s:windows_layout_toggle'))
         \ . ', [])', 'windows-layout-toggle', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['w', 'c'],
-        \ 'Goyo', 'centered-buffer-mode', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['w', 'C'],
-        \ 'ChooseWin | Goyo', 'centered-buffer-mode(other windows)', 1)
+  let s:lnum = expand('<slnum>') + 3
+  call SpaceVim#mapping#space#def('nnoremap', ['w', '.'], 'call call('
+        \ . string(s:_function('s:windows_transient_state')) . ', [])',
+        \ ['buffer transient state',
+        \ [
+        \ '[SPC b .] is to open the buffer transient state',
+        \ '',
+        \ 'Definition: ' . s:file . ':' . s:lnum,
+        \ ]
+        \ ]
+        \ , 1)
   call SpaceVim#mapping#space#def('nnoremap', ['w', 'd'],
         \ 'close', 'delete window', 1)
   call SpaceVim#mapping#space#def('nnoremap', ['w', 'D'],
@@ -145,13 +160,6 @@ function! SpaceVim#mapping#space#init() abort
   let g:_spacevim_mappings_space[';'] = ['call feedkeys("\<Plug>CommentOperator")', 'comment operator']
   nmap <silent> [SPC]; <Plug>CommentOperator
 
-  " in nerdcomment if has map to <plug>... the default mapping will be
-  " disable, so we add it for compatibility
-  nmap <Leader>cc <Plug>NERDCommenterComment
-  xmap <Leader>cc <Plug>NERDCommenterComment
-  nmap <Leader>ci <Plug>NERDCommenterInvert
-  xmap <Leader>ci <Plug>NERDCommenterInvert
-
   let g:_spacevim_mappings_space.e = {'name' : '+Errors/Encoding'}
   let g:_spacevim_mappings_space.B = {'name' : '+Global-buffers'}
   if g:spacevim_relativenumber
@@ -163,31 +171,36 @@ function! SpaceVim#mapping#space#init() abort
     let g:_spacevim_mappings_space.t.n = ['setlocal number!', 'toggle line number']
     call SpaceVim#mapping#menu('toggle line number', '[SPC]tn', 'setlocal number!')
   endif
-  call SpaceVim#mapping#space#def('nnoremap', ['b', 'b'], 'Unite buffer', 'buffer list', 1)
   call extend(g:_spacevim_mappings_prefixs['[SPC]'], get(g:, '_spacevim_mappings_space', {}))
   call SpaceVim#mapping#space#def('nnoremap', ['r', 'l'], 'Unite resume', 'resume unite buffer', 1)
 
   " Searching in current buffer
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 's'], 'Unite line', 'grep in current buffer', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'S'], "execute 'Unite grep:%::' . expand(\"<cword>\") . '  -start-insert'",
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 's'], "call SpaceVim#plugins#flygrep#open({'input' : input(\"grep pattern:\"), 'files': bufname(\"%\")})",
+        \ 'grep in current buffer', 1)
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'S'], "call SpaceVim#plugins#flygrep#open({'input' : expand(\"<cword>\"), 'files': bufname(\"%\")})",
         \ 'grep cursor word in current buffer', 1)
   " Searching in all loaded buffers
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'b'], 'Unite grep:$buffers', 'grep in all loaded buffers', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'B'], "execute 'Unite grep:$buffers::' . expand(\"<cword>\") . '  -start-insert'",
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'b'], "call SpaceVim#plugins#flygrep#open({'input' : input(\"grep pattern:\"), 'files':'@buffers'})",
+        \ 'grep in all loaded buffers', 1)
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'B'], "call SpaceVim#plugins#flygrep#open({'input' : expand(\"<cword>\"), 'files':'@buffers'})",
         \ 'grep cursor word in all loaded buffers', 1)
   " Searching in files in an arbitrary directory
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'f'], 'Unite grep', 'grep in arbitrary directory', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'F'], "execute 'Unite grep:::' . expand(\"<cword>\") . '  -start-insert'",
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'f'], "call SpaceVim#plugins#flygrep#open({'input' :"
+        \ . " input(\"grep pattern:\"), 'dir' : input(\"arbitrary dir:\", '', 'dir')})",
         \ 'grep in arbitrary directory', 1)
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'F'], "call SpaceVim#plugins#flygrep#open({'input' :"
+        \ . " expand(\"<cword>\"), 'dir' : input(\"arbitrary dir:\", '', 'dir')})",
+        \ 'grep cursor word in arbitrary directory', 1)
   " Searching in project
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'p'], 'Unite grep:.', 'grep in project', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'P'], "execute 'Unite grep:.::' . expand(\"<cword>\") . '  -start-insert'",
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'p'], "call SpaceVim#plugins#flygrep#open({'input' : input(\"grep pattern:\")})",
         \ 'grep in project', 1)
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'P'], "call SpaceVim#plugins#flygrep#open({'input' : expand(\"<cword>\")})",
+        \ 'grep cursor word in project', 1)
   " Searching background
   call SpaceVim#mapping#space#def('nnoremap', ['s', 'j'],
-        \ 'call SpaceVim#plugins#searcher#find("", SpaceVim#mapping#search#default_tool())', 'Background search keywords in project', 1)
+        \ 'call SpaceVim#plugins#searcher#find("", SpaceVim#mapping#search#default_tool()[0])', 'Background search keywords in project', 1)
   call SpaceVim#mapping#space#def('nnoremap', ['s', 'J'],
-        \ 'call SpaceVim#plugins#searcher#find(expand("<cword>"),SpaceVim#mapping#search#default_tool())',
+        \ 'call SpaceVim#plugins#searcher#find(expand("<cword>"),SpaceVim#mapping#search#default_tool()[0])',
         \ 'Background search cursor words in project', 1)
   call SpaceVim#mapping#space#def('nnoremap', ['s', 'l'], 'call SpaceVim#plugins#searcher#list()', 'List all searching results', 1)
 
@@ -274,14 +287,21 @@ function! SpaceVim#mapping#space#init() abort
   call SpaceVim#mapping#space#def('nnoremap', ['s', 't', 'J'], 'call SpaceVim#plugins#searcher#find(expand("<cword>"), "pt")',
         \ 'Background search cursor words in project with pt', 1)
 
-  call SpaceVim#mapping#space#def('nnoremap', ['s', 'g', 'G'], 'call SpaceVim#plugins#flygrep#open()',
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'g', 'G'], 'call SpaceVim#plugins#flygrep#open({})',
         \ 'grep on the fly', 1)
-  call SpaceVim#mapping#space#def('nnoremap', ['s', '/'], 'call SpaceVim#plugins#flygrep#open()',
+  call SpaceVim#mapping#space#def('nnoremap', ['s', '/'], 'call SpaceVim#plugins#flygrep#open({})',
         \ 'grep on the fly', 1)
 
   call SpaceVim#mapping#space#def('nnoremap', ['s', 'c'], 'noh',
         \ 'clear search highlight', 1)
 
+  "Symbol
+  nnoremap <silent> <plug>SpaceVim-plugin-iedit :call SpaceVim#plugins#iedit#start()<cr>
+  xnoremap <silent> <plug>SpaceVim-plugin-iedit :call SpaceVim#plugins#iedit#start(1)<cr>
+  call SpaceVim#mapping#space#def('nmap', ['s', 'e'], '<plug>SpaceVim-plugin-iedit',
+        \ 'start iedit mode', 0, 1)
+  call SpaceVim#mapping#space#def('nnoremap', ['s', 'h'], 'call SpaceVim#plugins#highlight#start()',
+        \ 'highlight all symbols', 1)
   " Getting help
   let g:_spacevim_mappings_space.h.d = {'name' : '+help-describe'}
   call SpaceVim#mapping#space#def('nnoremap', ['h', 'd', 'b'],
@@ -455,5 +475,43 @@ function! s:comment_to_line(invert) abort
     call feedkeys("\<Plug>NERDCommenterComment")
   endif
 endfunction
+
+function! s:windows_transient_state() abort
+  
+  let state = SpaceVim#api#import('transient_state') 
+  call state.set_title('Buffer Selection Transient State')
+  call state.defind_keys(
+        \ {
+        \ 'layout' : 'vertical split',
+        \ 'left' : [
+        \ ],
+        \ 'right' : [
+        \ {
+        \ 'key' : 'n',
+        \ 'desc' : 'next buffer',
+        \ 'func' : '',
+        \ 'cmd' : 'bnext',
+        \ 'exit' : 0,
+        \ },
+        \ ],
+        \ }
+        \ )
+  call state.open()
+endfunction
+
+" function() wrapper
+if v:version > 703 || v:version == 703 && has('patch1170')
+  function! s:_function(fstr) abort
+    return function(a:fstr)
+  endfunction
+else
+  function! s:_SID() abort
+    return matchstr(expand('<sfile>'), '<SNR>\zs\d\+\ze__SID$')
+  endfunction
+  let s:_s = '<SNR>' . s:_SID() . '_'
+  function! s:_function(fstr) abort
+    return function(substitute(a:fstr, 's:', s:_s, 'g'))
+  endfunction
+endif
 
 " vim:set et nowrap sw=2 cc=80:
