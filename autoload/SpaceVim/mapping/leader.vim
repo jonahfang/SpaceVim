@@ -129,9 +129,9 @@ endfunction
 
 function! SpaceVim#mapping#leader#defindDeniteLeader(key) abort
   if !empty(a:key)
-    #if a:key ==# 'F'
-    #  nnoremap <leader>F F
-    #endif
+    "if a:key ==# 'F'
+    "  nnoremap <leader>F F
+    "endif
     exe 'nnoremap <silent><nowait> [denite] :<c-u>LeaderGuide "' .
           \ a:key . '"<CR>'
     exe 'nmap ' .a:key . ' [denite]'
